@@ -6,8 +6,8 @@ let numero = '-'?digito+
 let letra = ['a'-'Z''A'-'Z']
 let identificador = letra(letra|digito)*
 
-rule tokens =
-	espacioEnBlanco	{}
+rule tokens = 
+  espacioEnBlanco {}
   | identificador	{ print("Identificador\n") }
   | numero			{ print("Número\n") }
   | '+'				{ print("Operador de suma\n") }
