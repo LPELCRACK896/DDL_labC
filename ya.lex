@@ -4,7 +4,6 @@ let espacioEnBlanco = delimitador+
 let digito = ['0'-'9']
 let numero = '-'?digito+
 let letra = ['a'-'Z''A'-'Z']
-let identificador = letra(letra|digito)*
 
 rule tokens = 
   espacioEnBlanco {}

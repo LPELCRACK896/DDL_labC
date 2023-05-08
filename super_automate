@@ -1,0 +1,42 @@
+digraph {
+	graph [rankdir=LR]
+	start [label=start shape=plaintext]
+	"0_A" [shape=doublecircle]
+	"0_B"
+	"0_C" [color=red shape=diamond]
+	start -> "0_C" [label="ε"]
+	"0_A" -> "0_B" [label="/t, /n, BS"]
+	"0_B" -> "0_B" [label="/t, /n, BS"]
+	"0_C" -> "0_A" [label="/t, /n, BS"]
+	"1_A" [shape=doublecircle]
+	"1_B" [color=red shape=diamond]
+	start -> "1_B" [label="ε"]
+	"1_A" -> "1_A" [label="/t, /n, BS"]
+	"1_B" -> "1_A" [label="/t, /n, BS"]
+	"2_A" [shape=doublecircle]
+	"2_B"
+	"2_C" [color=red shape=diamond]
+	start -> "2_C" [label="ε"]
+	"2_A" -> "2_B" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"2_B" -> "2_B" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"2_C" -> "2_A" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"3_A" [shape=doublecircle]
+	"3_B"
+	"3_C" [color=red shape=diamond]
+	start -> "3_C" [label="ε"]
+	"3_D"
+	"3_A" -> "3_A" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"3_A" -> "3_B" [label="-"]
+	"3_B" -> "3_B" [label="8, 1, 4, 3, 5, 9, 2, 6, -, 7, 0"]
+	"3_C" -> "3_A" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"3_C" -> "3_D" [label="-"]
+	"3_D" -> "3_A" [label="8, 1, 4, 3, 5, 9, 2, 6, 7, 0"]
+	"3_D" -> "3_B" [label="-"]
+	"4_A" [shape=doublecircle]
+	"4_B"
+	"4_C" [color=red shape=diamond]
+	start -> "4_C" [label="ε"]
+	"4_A" -> "4_B" [label="m, A, z, R, F, k, L, K, h, n, T, b, U, V, Q, X, i, u, d, c, l, g, G, O, x, o, s, e, J, y, M, H, B, E, q, C, S, I, f, j, r, D, P, W, a, p, t, v, Y, Z, N, w"]
+	"4_B" -> "4_B" [label="m, A, z, R, F, k, L, K, h, n, T, b, U, V, Q, X, i, u, d, c, l, g, G, O, x, o, s, e, J, y, M, H, B, E, q, C, S, I, f, j, r, D, P, W, a, p, t, v, Y, Z, N, w"]
+	"4_C" -> "4_A" [label="m, A, z, R, F, k, L, K, h, n, T, b, U, V, Q, X, i, u, d, c, l, g, G, O, x, o, s, e, J, y, M, H, B, E, q, C, S, I, f, j, r, D, P, W, a, p, t, v, Y, Z, N, w"]
+}

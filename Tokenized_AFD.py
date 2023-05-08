@@ -26,15 +26,23 @@ def union_afds(afds):
             if state == afd.estado_inicial:
                 g.edge('start', f"{i}_{state}", label='ε')
 
+        edge_labels = {}
         for state in afd.transitions:
             trans = afd.transitions.get(state)
             for symbol in trans:
                 if symbol != 'ε':
                     next_state = trans.get(symbol)
-                    g.edge(f"{i}_{state}", f"{i}_{next_state}", label=symbol)
+                    edge_key = (f"{i}_{state}", f"{i}_{next_state}")
+                    label = symbol.replace(' ', 'BS').replace('\t', '/t').replace('\n', '/n')
+                    if edge_key in edge_labels:
+                        edge_labels[edge_key].append(label)
+                    else:
+                        edge_labels[edge_key] = [label]
 
-    g.render('union_afds', view=True)
+        for edge_key, labels in edge_labels.items():
+            g.edge(edge_key[0], edge_key[1], label=', '.join(labels))
 
+    g.render('super_automate', view=True)
 
 @dataclass
 class ExpressionComponent:
@@ -68,6 +76,7 @@ class SuperAFN:
         self.alfabeto = None
         self.lets_regex = None
         self.token_afns = {}
+        self.afds = []
 
     def rebuild_expression(self, expression):
         i = 0
@@ -420,7 +429,7 @@ class SuperAFN:
         if not self.lets_regex:
             print("Must have created token_regex by using build_lets_regex()")
             return
-        
+        afds = []
         for token, expression in  self.lets_regex.items():
             posfix, err, alph = infix_to_posfix(expression)
             print(token)
@@ -432,7 +441,17 @@ class SuperAFN:
             afd.minimize()
             afd.rename_states()
             # afd.draw_afd()
+            afds.append(afd)
             print('a')
+        self.afds = afds
+
+
+    def read_file(filename):
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+            content = [line.strip() for line in lines]
+        print(content)
+
 
 if __name__ == "__main__":
     filename = "ya.lex"
@@ -445,5 +464,7 @@ if __name__ == "__main__":
     sup = SuperAFN(lets, rules)
     sup.build_lets_regex()
     sup.build_afds()
+    union_afds(sup.afds)
+
     print('a')
 
