@@ -55,63 +55,38 @@ class AFD():
         return curr_state in self.estados_de_aceptacion
 
     def minimize(self):
-        P = [self.estados_de_aceptacion, list(set(self.estados) - set(self.estados_de_aceptacion))]
+        P = [set(self.estados_de_aceptacion), set(self.estados) - set(self.estados_de_aceptacion)]
 
         while True:
-            P_prime = []
+            P_new = []
+            for partition in P:
+                partition_dict = {}
+                for state in partition:
+                    key = tuple(sorted((next_state, symbol) for symbol, next_state in self.transitions[state].items() if next_state is not None))
+                    partition_dict.setdefault(key, set()).add(state)
+                P_new.extend(partition_dict.values())
 
-            for group in P:
-                d = {}
-
-                for state in group:
-                    for symbol in self.alfabeto:
-                        next_state = self.transitions[state].get(symbol, None)
-                        if next_state is not None:
-                            next_group = None
-                            for i, g in enumerate(P):
-                                if next_state in g:
-                                    next_group = i
-                                    break
-                            if next_group is None:
-                                next_group = len(P_prime)
-                                P_prime.append([next_state])
-                            d.setdefault(next_group, []).append(state)
-                for next_group, states in d.items():
-                    if len(states) < len(P[next_group]):
-                        P[next_group] = states
-                    elif len(states) > len(P[next_group]):
-                        P[next_group] = states
-
-            for state in self.estados:
-                if not any(state in group for group in P_prime):
-                    P_prime.append([state])
-
-            if P == P_prime:
+            if P_new == P:
                 break
             else:
-                P = P_prime
-        new_states = [f"{''.join(group)}" for group in P]
+                P = P_new
+
+        new_states = [''.join(sorted(group)) for group in P]
         new_transitions = {}
+
         for group in P:
+            group_key = new_states[P.index(group)]
             for symbol in self.alfabeto:
-                next_state = None
-                for state in group:
-                    if next_state is None:
-                        next_state = new_states[P.index([self.transitions[state].get(symbol, None) or self.estado_final])]
-                    else:
-                        assert next_state == new_states[P.index([self.transitions[state].get(symbol, None) or self.estado_final])], \
-                            f"Different next states for symbol {symbol} in group {group} and state {state}"
-                new_transitions.setdefault(new_states[P.index(group)], {})[symbol] = next_state
-        new_estado_inicial = new_states[P.index([self.estado_inicial])]
-        new_estado_final = None
-        new_estados_de_aceptacion = []
-        for group in P:
-            if self.estado_final in group:
-                new_estado_final = new_states[P.index(group)]
-                new_estados_de_aceptacion.append(new_estado_final)
-            if set(group) & set(self.estados_de_aceptacion):
-                new_estados_de_aceptacion.append(new_states[P.index(group)])
-        return AFD(new_estado_inicial, self.alfabeto, new_states, new_estados_de_aceptacion, new_transitions, new_estado_final)
+                next_state = self.transitions[list(group)[0]].get(symbol)
+                if next_state:
+                    next_group = next((g for g in P if next_state in g), None)
+                    new_transitions.setdefault(group_key, {})[symbol] = new_states[P.index(next_group)]
+
+        new_estado_inicial = next(new_states[P.index(g)] for g in P if self.estado_inicial in g)
+        new_estados_de_aceptacion = [new_states[P.index(g)] for g in P if set(g) & set(self.estados_de_aceptacion)]
+
+        return AFD(new_estado_inicial, self.alfabeto, new_states, new_estados_de_aceptacion, new_transitions)
+
     
     def rename_states(self):
         abcdef = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

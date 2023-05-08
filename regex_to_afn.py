@@ -81,7 +81,7 @@ def generate_afn_from_posfix(posfix: str, alphabet: set)-> AFN:
                     for state in afn1.estados:
                         total_states, states = __get_available_name_states(total_states, 1)
                         states_replica[state] = states[0]
-                    afn_replica = __replicate_afn(states_replica, afn)
+                    afn_replica = __replicate_afn(states_replica, afn1)
 
                     total_states, states = __get_available_name_states(total_states, 2)
                     new_afn = __build_plus(afn1, afn_replica, states, alphabet)
@@ -242,4 +242,14 @@ def main():
     __build_interrogation(afn1, states, alphabet).draw_afn()
 
 if __name__ == "__main__":
-    main()
+    from regex_to_posfix import infix_to_posfix
+    from AFN import AFN
+    from regex_to_afn import generate_afn_from_posfix
+    regex = "a|b*+c?(de)"
+    postfix, err, alph = infix_to_posfix(regex)
+    print(postfix)
+
+    afn: AFN = generate_afn_from_posfix(postfix, alph)
+    # afn.draw_afn()
+    afd = afn.to_afd()
+    afd.draw_afd()

@@ -6,7 +6,7 @@ from camino import Camino
 
 class AFN():
 
-    def __init__(self, estado_inicial, alfabeto = [], estados = [], estados_de_aceptacion = [], transitions = {}, estado_final = None) -> None:
+    def __init__(self, estado_inicial, alfabeto = [], estados = [], estados_de_aceptacion = [], transitions = {}, estado_final = None, related_token = None) -> None:
         self.estado_final = estado_final
         self.alfabeto: list = alfabeto #Aceptado como trancisiones (nombre de arista, digamos)
         self.estados: list = estados #Estados (vertices)
@@ -17,6 +17,7 @@ class AFN():
         self.hasTransitionE: bool = 'ε' in self.alfabeto 
         self.cerraduras_de_estados = { estado : set() for estado in self.estados }
         self.caminos = []
+        self.find_cerradura()
         
 
 

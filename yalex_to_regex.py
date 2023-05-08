@@ -60,7 +60,6 @@ def read_yalex(yalex_file):
                                         error = f"Syntax error: Expects proper assignation in let line {i+1}: {line}"
                                 else:
                                     error = f"Syntax error: Expects asignation on let line {i+1}: {line} "
-                                print("Finish let")
                             else:
                                 error = f"Syntax error: Was expecting rule on ln {i+1} but got let statment instead: {line}"
                         elif pref_disp == "rule":
@@ -86,7 +85,6 @@ def read_yalex(yalex_file):
                                     rule_spl = rest_line[2]
                                     name, rule = rule_spl.split("{")
                                     rule = "{"+rule
-                                    print("a")
                                     rules[name][rule_name] = actual_rule
 
                             elif len(rest_line)==4:
@@ -104,7 +102,6 @@ def read_yalex(yalex_file):
                                         rule_name = rule_spl[0]
                                         actual_rule = "{"+rule_spl[1]+actual_rule
                                     rules[name][rule_name] = actual_rule
-                                    print('a')
                             else:
                                 error = f"Syntax error: Unexepcted number of arguments on ln {i+1} (expected 2 or 3), line: {line}"
                         elif pref_disp == "first_rule":
@@ -125,16 +122,17 @@ def read_yalex(yalex_file):
                                     rules[last_rule][name] = content
                                 else:
                                     error = f"Syntax error on ln {i+1}, expects rule name and output afterwards surronded by curly braces. Got {line} "
-                        print(pref_disp)
-                        print(f"\t{line}")
                 else: 
                     error = f"Syntax error: Unexpected line format ln: {i+1}. \"{line}\""
             i += 1
         if not error:
-            return lets, rules
-        return error
+            return None, lets, rules
+        return error, None, None
 
 if __name__ == "__main__":
-    filename = "yalex.txt"
-    read_yalex(filename)    
-
+    filename = "ya.lex"
+    error, lets, rules = read_yalex(filename)
+    if not error:
+        print("Valid")
+    else:
+        print(f"Error: {error}")
