@@ -32,17 +32,18 @@ class AFN():
                 afn.node(state)
             else:
                 afn.node(state, shape='doublecircle')
-            
+
         for state in self.transitions:
             trans = self.transitions.get(state)
             for symbol in trans:
                 transitions = trans.get(symbol)
                 if transitions!=None:
                     for next_state in transitions:
-                        afn.edge(state, next_state, label=symbol)
+                        label = symbol.replace(' ', 'BS').replace('\t', '/t').replace('\n', '/n')
+                        afn.edge(state, next_state, label=label)
 
         afn.render('afn', view=True)
-    
+
     def find_cerradura(self):
         cerradura = {state: set() for state in self.estados}
         for state in self.estados:

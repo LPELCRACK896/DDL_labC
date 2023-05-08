@@ -7,6 +7,34 @@ from AFD import AFD
 from AFN import AFN
 from regex_to_afn import generate_afn_from_posfix
 from regex_to_posfix import infix_to_posfix
+import graphviz
+
+def union_afds(afds):
+    g = graphviz.Digraph(format='pdf')
+    g.graph_attr['rankdir'] = 'LR'
+    g.node('start', shape='plaintext', label='start')
+
+    for i, afd in enumerate(afds):
+        for state in afd.estados:
+            if state == afd.estado_inicial:
+                g.node(f"{i}_{state}", shape='diamond', color='red')
+            elif state not in afd.estados_de_aceptacion:
+                g.node(f"{i}_{state}")
+            else:
+                g.node(f"{i}_{state}", shape='doublecircle')
+
+            if state == afd.estado_inicial:
+                g.edge('start', f"{i}_{state}", label='ε')
+
+        for state in afd.transitions:
+            trans = afd.transitions.get(state)
+            for symbol in trans:
+                if symbol != 'ε':
+                    next_state = trans.get(symbol)
+                    g.edge(f"{i}_{state}", f"{i}_{next_state}", label=symbol)
+
+    g.render('union_afds', view=True)
+
 
 @dataclass
 class ExpressionComponent:
@@ -394,12 +422,17 @@ class SuperAFN:
             return
         
         for token, expression in  self.lets_regex.items():
-            posfix = infix_to_posfix(expression)
-            print(posfix)
+            posfix, err, alph = infix_to_posfix(expression)
+            print(token)
+            afn: AFN = generate_afn_from_posfix(posfix, alph)
+            afn.find_cerradura()
+            afd:AFD = afn.to_afd()
+            afd.rename_states()
+            # afd.draw_afd()
+            afd.minimize()
+            afd.rename_states()
+            # afd.draw_afd()
             print('a')
-
-    def draw_afn(self):
-        pass
 
 if __name__ == "__main__":
     filename = "ya.lex"
